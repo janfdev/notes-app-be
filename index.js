@@ -23,6 +23,9 @@ app.use(
   })
 );
 
+
+// Backend Ready
+
 app.get("/", (req, res) => {
   res.json({ data: "hello" });
 });
@@ -136,9 +139,14 @@ app.get("/get-user", authenticateToken, async (req, res) => {
   if (!isUser) {
     return res.sendStatus(401);
   }
- 
+
   return res.json({
-    user: isUser,
+    user: {
+      fullName: isUser.fullName,
+      email: isUser.email,
+      _id: isUser._id,
+      createdOn: isUser.createdOn
+    },
     message: "User retrieved successfully"
   });
 });
