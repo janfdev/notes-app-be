@@ -127,6 +127,22 @@ app.post("/login", async (req, res) => {
   }
 });
 
+// Get user
+app.get("/get-user", authenticateToken, async (req, res) => {
+  const { user } = req.user;
+
+  const isUser = await User.findOne({ _id: user._id });
+
+  if (!isUser) {
+    return res.sendStatus(401);
+  }
+ 
+  return res.json({
+    user: isUser,
+    message: "User retrieved successfully"
+  });
+});
+
 // Add Note
 app.post("/add-note", authenticateToken, async (req, res) => {
   const { title, content, tags } = req.body;
@@ -168,8 +184,6 @@ app.post("/add-note", authenticateToken, async (req, res) => {
     });
   }
 });
-
-
 
 // Edit Note
 app.put("/edit-note/:noteId", authenticateToken, async (req, res) => {
@@ -259,6 +273,39 @@ app.delete("/delete-note/:noteId", authenticateToken, async (req, res) => {
     return res.json({
       error: false,
       message: "Note deleted successfully"
+    });
+  } catch (error) {
+    return res.status(500).json({
+      error: true,
+      message: "Internal Server Error"
+    });
+  }
+});
+
+// Update isPinned Value
+app.put("/update-note-pinned/:noteId", authenticateToken, async (req, res) => {
+  const noteId = req.params.noteId;
+  const { isPinned } = req.body;
+  const { user } = req.user;
+
+  try {
+    const note = await Note.findOne({ _id: noteId, userId: user._id });
+
+    if (!note) {
+      return res.status(400).json({
+        error: true,
+        message: "Note not found"
+      });
+    }
+
+    if (isPinned) note.isPinned = isPinned || false;
+
+    await note.save();
+
+    return res.json({
+      error: false,
+      note,
+      message: "Note updated successfully"
     });
   } catch (error) {
     return res.status(500).json({
