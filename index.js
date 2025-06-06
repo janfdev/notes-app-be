@@ -72,14 +72,14 @@ app.post("/create-account", async (req, res) => {
 
   await user.save();
 
-  const accesToken = jwt.sign({ user }, process.env.ACCESS_TOKEN_SECRET, {
+  const accessToken = jwt.sign({ user }, process.env.ACCESS_TOKEN_SECRET, {
     expiresIn: "36000m"
   });
 
   return res.json({
     error: false,
     user,
-    accesToken,
+    accessToken,
     message: "Registration successfully"
   });
 });
@@ -106,13 +106,13 @@ app.post("/login", async (req, res) => {
 
   if (!userInfo) {
     return res.status(400).json({
-      message: "User not foun"
+      message: "User not found"
     });
   }
 
   if (userInfo.email == email && userInfo.password == password) {
     const user = { user: userInfo };
-    const accesToken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, {
+    const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, {
       expiresIn: "36000m"
     });
 
@@ -120,7 +120,7 @@ app.post("/login", async (req, res) => {
       error: false,
       message: "Login successfully",
       email,
-      accesToken
+      accessToken
     });
   } else {
     return res.status(400).json({
