@@ -5,6 +5,7 @@ const { authenticateToken } = require('../utilities/authenticateToken');
 
 router.get('/', authenticateToken, noteController.getAllNotes);
 router.get('/search', authenticateToken, noteController.searchNotes);
+router.get("/notes", authenticateToken, noteController.getAllNotes);
 router.post('/', authenticateToken, noteController.addNote);
 router.get('/:id', authenticateToken, noteController.getNoteById);
 router.put('/:id', authenticateToken, noteController.editNote);
